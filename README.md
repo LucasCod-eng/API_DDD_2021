@@ -1,2 +1,5 @@
 # API_DDD_2021
-aasass
+
+--------- Projeto API ----------------
+
+Criação de API para noticias
