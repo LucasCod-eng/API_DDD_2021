@@ -15,24 +15,25 @@ namespace Infraestrutura.Repositorio.Genericos
     {
         private readonly DbContextOptions<Contexto> _OptionsBuilder;
 
-        public RepositorioGenerico() 
+        public RepositorioGenerico()
         {
             _OptionsBuilder = new DbContextOptions<Contexto>();
         }
-        public async Task Adicionar(T obj)
+
+        public async Task Adicionar(T Objeto)
         {
             using (var data = new Contexto(_OptionsBuilder))
             {
-                await data.Set<T>().AddAsync(obj);
+                await data.Set<T>().AddAsync(Objeto);
                 await data.SaveChangesAsync();
             }
         }
 
-        public async Task Atualizar(T obj)
+        public async Task Atualizar(T Objeto)
         {
             using (var data = new Contexto(_OptionsBuilder))
             {
-                data.Set<T>().Update(obj);
+                data.Set<T>().Update(Objeto);
                 await data.SaveChangesAsync();
             }
         }
@@ -40,16 +41,16 @@ namespace Infraestrutura.Repositorio.Genericos
         public async Task<T> BuscarPorId(int Id)
         {
             using (var data = new Contexto(_OptionsBuilder))
-            {              
+            {
                 return await data.Set<T>().FindAsync(Id);
             }
         }
 
-        public async Task Excluir(T obj)
+        public async Task Excluir(T Objeto)
         {
             using (var data = new Contexto(_OptionsBuilder))
             {
-                data.Set<T>().Remove(obj);
+                data.Set<T>().Remove(Objeto);
                 await data.SaveChangesAsync();
             }
         }
@@ -58,36 +59,41 @@ namespace Infraestrutura.Repositorio.Genericos
         {
             using (var data = new Contexto(_OptionsBuilder))
             {
-                //AsNoTracking: Ele Faz o Select no Banco tranzendo tudo que está guardado, sendo muito mais
-                //Perfotmático
                 return await data.Set<T>().AsNoTracking().ToListAsync();
             }
         }
 
 
-
+        #region Disposed https://docs.microsoft.com/pt-br/dotnet/standard/garbage-collection/implementing-dispose
+        // Flag: Has Dispose already been called?
         bool disposed = false;
-        SafeHandle Handle = new SafeFileHandle(IntPtr.Zero, true);
-        
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
 
+
+        // Public implementation of Dispose pattern callable by consumers.
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (disposed)
                 return;
+
             if (disposing)
             {
-                Handle.Dispose();
+                handle.Dispose();
+                // Free any other managed objects here.
+                //
             }
 
             disposed = true;
         }
-
+        #endregion
 
     }
 }
